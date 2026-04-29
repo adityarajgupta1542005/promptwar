@@ -7,6 +7,7 @@ export default function Simulator() {
     L,
     phase,
     scenario,
+    stepIndex,
     selectedOption,
     showFeedback,
     score,

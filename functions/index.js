@@ -15,8 +15,10 @@ const { GoogleGenerativeAI } = require("@google/generative-ai");
 
 // ─── CORS Configuration ────────────────────────────────────────────────────
 const ALLOWED_ORIGINS = [
-  "https://votesmart-ai-494317.web.app",
-  "https://votesmart-ai-494317.firebaseapp.com",
+  "https://promptwarhack2skil.web.app",
+  "https://promptwarhack2skil.firebaseapp.com",
+  // Cloud Run service URL — update after first deploy if it differs
+  "https://votesmart-ai-asia-south1-promptwarhack2skil.a.run.app",
   "http://localhost:5173",
   "http://localhost:4173",
 ];
