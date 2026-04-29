@@ -1,33 +1,62 @@
-import { describe, it, expect } from 'vitest';
-import { render, screen } from '../../test/test-utils';
+import { describe, it, expect, vi } from 'vitest';
+import { render, screen } from '@testing-library/react';
+import { BrowserRouter } from 'react-router-dom';
 import Dashboard from '../Dashboard';
+import { LanguageProvider } from '../../contexts/LanguageContext';
+
+// Mock QuickTips to avoid testing its internals here
+vi.mock('../QuickTips', () => ({
+  default: () => <div data-testid="quick-tips-mock">QuickTips</div>
+}));
 
 describe('Dashboard Component', () => {
-  it('renders main landmark', () => {
-    render(<Dashboard />);
-    expect(screen.getByRole('main')).toBeInTheDocument();
+  const renderDashboard = () => {
+    render(
+      <LanguageProvider>
+        <BrowserRouter>
+          <Dashboard />
+        </BrowserRouter>
+      </LanguageProvider>
+    );
+  };
+
+  it('renders the hello message', () => {
+    renderDashboard();
+    expect(screen.getByText(/Hello 👋/i)).toBeInTheDocument();
   });
 
-  it('renders logo with alt text', () => {
-    render(<Dashboard />);
-    const logo = screen.getByAltText('VoteSmart AI Logo');
-    expect(logo).toBeInTheDocument();
+  it('renders the progress section', () => {
+    renderDashboard();
+    expect(screen.getByText('Your Progress')).toBeInTheDocument();
+    expect(screen.getByRole('progressbar')).toBeInTheDocument();
   });
 
-  it('renders explore cards as links', () => {
-    render(<Dashboard />);
-    const links = screen.getAllByRole('link');
-    expect(links.length).toBeGreaterThanOrEqual(4);
+  it('renders explore cards with correct links', () => {
+    renderDashboard();
+    expect(screen.getByText('Explore')).toBeInTheDocument();
+    
+    // Check for specific cards
+    expect(screen.getByText('Voting Journey')).toBeInTheDocument();
+    expect(screen.getByText('Myth vs Reality')).toBeInTheDocument();
+    expect(screen.getByText('Check Voter Status')).toBeInTheDocument();
+    expect(screen.getByText('AI Assistant')).toBeInTheDocument();
   });
 
-  it('renders QuickTips section', () => {
-    render(<Dashboard />);
-    expect(screen.getByText(/Quick Voting Tips|त्वरित मतदान/i)).toBeInTheDocument();
+  it('renders the QuickTips mock', () => {
+    renderDashboard();
+    expect(screen.getByTestId('quick-tips-mock')).toBeInTheDocument();
   });
 
   it('renders bottom navigation', () => {
-    render(<Dashboard />);
-    const navs = screen.getAllByRole('navigation');
-    expect(navs.length).toBeGreaterThanOrEqual(1);
+    renderDashboard();
+    const nav = screen.getByRole('navigation', { name: /Main navigation/i });
+    expect(nav).toBeInTheDocument();
+    
+    // Check navigation links
+    expect(screen.getAllByRole('link', { name: /Home/i })[0]).toBeInTheDocument();
+    expect(screen.getAllByRole('link', { name: /Journey/i })[0]).toBeInTheDocument();
+    expect(screen.getAllByRole('link', { name: /Verify/i })[0]).toBeInTheDocument();
+    expect(screen.getAllByRole('link', { name: /Learn/i })[0]).toBeInTheDocument();
+    expect(screen.getAllByRole('link', { name: /AI Chat/i })[0]).toBeInTheDocument();
   });
 });
