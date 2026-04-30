@@ -1,11 +1,14 @@
-import { describe, it, expect, vi } from 'vitest';
+/**
+ * @fileoverview Tests for Hero landing page component.
+ */
+import { describe, it, expect } from 'vitest';
 import { render, screen } from '../../test/test-utils';
 import Hero from '../Hero';
 
 describe('Hero Component', () => {
   it('renders without crashing', () => {
     render(<Hero />);
-    expect(screen.getByRole('main')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument();
   });
 
   it('renders the logo image with alt text', () => {
@@ -44,5 +47,20 @@ describe('Hero Component', () => {
     const link = screen.getByText('Contact Us');
     expect(link).toHaveAttribute('target', '_blank');
     expect(link).toHaveAttribute('rel', 'noopener noreferrer');
+  });
+
+  it('renders feature links to simulator, guide, and myths', () => {
+    render(<Hero />);
+    const links = screen.getAllByRole('link');
+    const hrefs = links.map(l => l.getAttribute('href'));
+    expect(hrefs).toContain('/simulator');
+    expect(hrefs).toContain('/guide');
+    expect(hrefs).toContain('/myths');
+  });
+
+  it('has a footer with role=contentinfo', () => {
+    render(<Hero />);
+    const footer = screen.getByRole('contentinfo');
+    expect(footer).toBeInTheDocument();
   });
 });

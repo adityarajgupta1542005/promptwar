@@ -1,21 +1,29 @@
+/**
+ * ChatAssistant — AI chat interface with voice input and text-to-speech.
+ *
+ * Features:
+ *  - Real-time messaging with AI backend via useChat hook
+ *  - Voice input via Web Speech API
+ *  - Text-to-speech playback via useSpeech hook
+ *  - Quick suggestion chips for common questions
+ *  - Accessible: ARIA live regions, keyboard navigation, screen reader labels
+ *
+ * @module ChatAssistant
+ */
 import { useState, useCallback } from 'react';
 import { useChat } from '../hooks/useChat';
 import { useSpeech } from '../hooks/useSpeech';
 import ListenButton from './ListenButton';
+import { IconSend, IconMic } from './icons';
 
-// ── Inline SVG icons (no react-icons import needed) ────────────────────────
-const IconSend = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6" aria-hidden="true">
-    <line x1="22" y1="2" x2="11" y2="13" /><polygon points="22 2 15 22 11 13 2 9 22 2" />
-  </svg>
-);
-const IconMic = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6" aria-hidden="true">
-    <path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z" /><path d="M19 10v2a7 7 0 01-14 0v-2" /><line x1="12" y1="19" x2="12" y2="23" /><line x1="8" y1="23" x2="16" y2="23" />
-  </svg>
-);
-
-/** Safe markdown-to-React renderer (no dangerouslySetInnerHTML) */
+/**
+ * Safely renders markdown-like text to React elements.
+ * Handles bold (**text**), bullet points (- text), and newlines.
+ * Uses no dangerouslySetInnerHTML for XSS safety.
+ *
+ * @param {string} text - Raw message text.
+ * @returns {JSX.Element[]} Array of React elements.
+ */
 function renderMessage(text) {
   return text.split('\n').map((line, idx, arr) => {
     const parts = line.split(/(\*\*.*?\*\*)/g);
@@ -37,6 +45,10 @@ function renderMessage(text) {
   });
 }
 
+/**
+ * ChatAssistant page component.
+ * @returns {JSX.Element}
+ */
 export default function ChatAssistant() {
   const {
     messages,
@@ -58,26 +70,28 @@ export default function ChatAssistant() {
 
   const listenLabel = language === 'hi' ? 'सुनें' : 'Listen';
 
-  const handleListenClick = useCallback((msgId, content) => {
-    setPlayedIds((prev) => new Set(prev).add(msgId));
-    speak(content, language, msgId);
-  }, [speak, language]);
+  /** Handle TTS playback for a specific message. */
+  const handleListenClick = useCallback(
+    (msgId, content) => {
+      setPlayedIds((prev) => new Set(prev).add(msgId));
+      speak(content, language, msgId);
+    },
+    [speak, language]
+  );
 
+  /** Compute status bar text based on current state. */
   const statusText = loading
     ? L('chatThinking')
     : preparing
-    ? (language === 'hi' ? 'AI आवाज़ तैयार कर रहा है...' : 'AI is preparing to speak...')
-    : speaking
-    ? (language === 'hi' ? 'AI बोल रहा है...' : 'AI is speaking...')
-    : L('chatReady');
+      ? (language === 'hi' ? 'AI आवाज़ तैयार कर रहा है...' : 'AI is preparing to speak...')
+      : speaking
+        ? (language === 'hi' ? 'AI बोल रहा है...' : 'AI is speaking...')
+        : L('chatReady');
 
   return (
     <div className="bg-[#f5efe9] min-h-[calc(100vh-80px)] p-4 flex justify-center items-start pt-8">
       <div className="w-full max-w-3xl">
-        {/*
-          h1 is the page-level heading for this route.
-          It lives outside the chat log to preserve correct heading hierarchy.
-        */}
+        {/* Page-level heading for screen readers (maintains heading hierarchy) */}
         <h1 className="sr-only">{L('chatTitle')}</h1>
 
         <div
@@ -86,7 +100,7 @@ export default function ChatAssistant() {
           role="log"
           aria-label={L('chatTitle')}
         >
-          {/* Visible header — uses h2 because h1 is declared above */}
+          {/* Visible header */}
           <header className="flex justify-between items-center border-b border-gray-200 pb-4 mb-4">
             <div className="flex items-center gap-3">
               <span className="text-2xl" aria-hidden="true">🗳️</span>
@@ -110,7 +124,7 @@ export default function ChatAssistant() {
             </button>
           </header>
 
-          {/* Messages — aria-live="polite" announces new AI responses */}
+          {/* Messages List */}
           <div
             className="flex-1 overflow-y-auto space-y-4 pr-2"
             id="chat-messages"
@@ -153,6 +167,7 @@ export default function ChatAssistant() {
               </div>
             ))}
 
+            {/* Loading indicator */}
             {loading && (
               <div className="flex justify-start">
                 <span className="text-2xl mr-2 mt-1 flex-shrink-0" aria-hidden="true">🗳️</span>
@@ -174,7 +189,7 @@ export default function ChatAssistant() {
             <div ref={endRef} />
           </div>
 
-          {/* Quick suggestion chips — only shown on empty chat */}
+          {/* Quick suggestion chips */}
           {messages.length <= 1 && (
             <div className="flex flex-wrap gap-2 mt-4" role="group" aria-label={language === 'hi' ? 'सुझाए गए प्रश्न' : 'Suggested questions'}>
               {quickQuestions.map((q, i) => (

@@ -1,15 +1,28 @@
 /**
- * Dashboard — user home screen showing explore cards, progress, and quick tips.
+ * Dashboard — User home screen showing explore cards, progress, and quick tips.
+ *
  * Acts as the app's secondary landing page accessible from the bottom nav.
+ * Provides at-a-glance navigation to all major app features and a progress
+ * indicator for the voting journey simulator.
+ *
+ * @module Dashboard
  */
 import { Link } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
 import { t } from '../data/translations';
 import QuickTips from './QuickTips';
 
-/** Illustrative progress percentage — will be wired to real data once persistence is added. */
+/**
+ * Illustrative progress percentage.
+ * TODO: Wire to real data once persistence/state is added.
+ * @constant {number}
+ */
 const ILLUSTRATIVE_PROGRESS_PCT = 65;
 
+/**
+ * Dashboard page component.
+ * @returns {JSX.Element}
+ */
 export default function Dashboard() {
   const { language } = useLanguage();
   const L = (key) => t(language, key);

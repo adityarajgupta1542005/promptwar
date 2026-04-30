@@ -1,8 +1,23 @@
+/**
+ * MythBuster — Election myth verification page.
+ *
+ * Features:
+ *  - AI-powered custom claim verification via Gemini
+ *  - Pre-loaded myth database with category filtering
+ *  - Expandable myth/reality cards with severity ratings
+ *  - Text-to-speech for all myth explanations
+ *
+ * @module MythBuster
+ */
 import { useLanguage, lt } from '../contexts/LanguageContext';
 import { useMythChecker } from '../hooks/useMythChecker';
 import { useSpeech } from '../hooks/useSpeech';
 import ListenButton from './ListenButton';
 
+/**
+ * MythBuster page component.
+ * @returns {JSX.Element}
+ */
 export default function MythBuster() {
   const {
     language,

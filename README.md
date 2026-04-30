@@ -107,7 +107,7 @@ This ensures the platform works even without network connectivity.
 │  React 18 + Vite + Tailwind CSS             │
 │  ┌─────────┐ ┌──────────┐ ┌──────────────┐  │
 │  │  Hero   │ │Simulator │ │  MythBuster  │  │
-│  │  Page   │ │  (Quiz)  │ │(AI Verify)   │  │
+│  │  Page   │ │(Modular) │ │(AI Verify)   │  │
 │  └─────────┘ └──────────┘ └──────────────┘  │
 │  ┌─────────┐ ┌──────────┐ ┌──────────────┐  │
 │  │Voting   │ │Dashboard │ │Chat Assistant│  │
@@ -160,19 +160,27 @@ npm run build
 ```
 src/
 ├── components/          # React UI components
-│   ├── __tests__/       # Component test suites
+│   ├── __tests__/       # Component test suites (15+ suites)
+│   ├── icons/           # Centralized SVG icon library
 │   ├── Hero.jsx         # Landing page
 │   ├── ChatAssistant.jsx # AI chat interface
 │   ├── MythBuster.jsx   # Myth verification
-│   ├── Simulator.jsx    # Voting quiz simulator
+│   ├── Simulator/       # Modularized voting simulator
+│   │   ├── Simulator.jsx
+│   │   ├── SimulatorSelect.jsx
+│   │   ├── SimulatorQuiz.jsx
+│   │   └── SimulatorResults.jsx
 │   ├── VotingGuide.jsx  # Personalized guide
 │   ├── Dashboard.jsx    # User dashboard
 │   ├── Navbar.jsx       # Navigation
+│   ├── SettingsModal.jsx # Centralized settings modal
 │   └── ...
 ├── contexts/            # React Context providers
 │   └── LanguageContext.jsx # Bilingual state
 ├── hooks/               # Custom React hooks
-│   └── useSpeech.js     # Text-to-speech
+│   ├── useSettings.js   # Settings state management
+│   ├── useSpeech.js     # Text-to-speech
+│   └── useSimulator.js  # Simulator logic extraction
 ├── services/            # Backend API communication
 │   └── apiService.js    # Centralized proxy routing to Cloud Functions
 ├── data/                # Static data (myths, translations)
@@ -186,7 +194,8 @@ src/
 - **Framework:** Vitest + React Testing Library
 - **Environment:** jsdom
 - **Coverage Target:** 80%+ lines, 80%+ functions, 70%+ branches
-- **Test Suites:** 12 suites covering all components, contexts, hooks, and utilities
+- **Test Suites:** 16+ suites covering all components, sub-components, contexts, hooks, and utilities
+- **Highlights:** Comprehensive mocking for `matchMedia`, `SpeechSynthesis`, and `IntersectionObserver`.
 
 ```bash
 npm test              # Run all tests

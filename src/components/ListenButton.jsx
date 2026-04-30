@@ -1,33 +1,39 @@
+/**
+ * ListenButton — Accessible text-to-speech trigger button.
+ *
+ * Displays contextual icon and label based on playback state:
+ *  - Default: speaker icon + "Listen"
+ *  - Preparing: spinner + "Preparing..."
+ *  - Playing: mute icon + "Stop"
+ *  - Replayed: refresh icon + "Replay"
+ *
+ * @module ListenButton
+ * @param {object} props
+ * @param {Function} props.onClick - Click handler to trigger TTS.
+ * @param {boolean} [props.isPlaying=false] - Whether audio is currently playing.
+ * @param {boolean} [props.isPreparing=false] - Whether audio is being prepared.
+ * @param {boolean} [props.hasPlayed=false] - Whether the audio has been played before.
+ * @param {string} [props.label='Listen'] - Display label / language indicator.
+ */
+import { IconSpeakerOn, IconSpeakerOff, IconRefresh } from './icons';
 import './ListenButton.css';
 
-const IconSpeakerOn = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
-    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" /><path d="M19.07 4.93a10 10 0 010 14.14" /><path d="M15.54 8.46a5 5 0 010 7.07" />
-  </svg>
-);
-const IconSpeakerOff = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
-    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" /><line x1="23" y1="9" x2="17" y2="15" /><line x1="17" y1="9" x2="23" y2="15" />
-  </svg>
-);
-const IconRefresh = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
-    <polyline points="23 4 23 10 17 10" /><polyline points="1 20 1 14 7 14" /><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15" />
-  </svg>
-);
-
-/**
- * ListenButton — Accessible TTS trigger
- * Props: onClick, isPlaying, isPreparing, hasPlayed, label (optional)
- */
-export default function ListenButton({ onClick, isPlaying, isPreparing, hasPlayed, label }) {
+export default function ListenButton({
+  onClick,
+  isPlaying = false,
+  isPreparing = false,
+  hasPlayed = false,
+  label = 'Listen',
+}) {
+  /** Determine which icon to display based on playback state. */
   const getIcon = () => {
-    if (isPreparing) return <span className="preparing-spinner">•••</span>;
+    if (isPreparing) return <span className="preparing-spinner" aria-hidden="true">•••</span>;
     if (isPlaying) return <IconSpeakerOff />;
     if (hasPlayed) return <IconRefresh />;
     return <IconSpeakerOn />;
   };
 
+  /** Determine the button label text based on playback state and language. */
   const getText = () => {
     const isHindi = label === 'सुनें';
     if (isPreparing) return isHindi ? 'तैयार हो रहा है...' : 'Preparing...';
@@ -41,8 +47,9 @@ export default function ListenButton({ onClick, isPlaying, isPreparing, hasPlaye
       className={`listen-btn ${isPlaying ? 'playing' : ''} ${isPreparing ? 'preparing' : ''}`}
       onClick={onClick}
       disabled={isPreparing}
-      aria-label={isPlaying ? 'Stop listening' : 'Listen to this'}
+      aria-label={isPlaying ? 'Stop listening' : 'Listen to this content'}
       title={isPlaying ? 'Stop' : (label || 'Listen')}
+      type="button"
     >
       {getIcon()}
       <span>{getText()}</span>

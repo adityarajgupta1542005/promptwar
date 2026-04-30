@@ -1,19 +1,37 @@
-import { useState } from 'react';
+/**
+ * VoterStatus — Simulated voter roll status checker.
+ *
+ * Provides a form where users can enter their name and state to
+ * check if they're "found" in the voter list. Uses mock logic
+ * (name length % 2) to demonstrate the flow.
+ *
+ * Imports statesList from central data module to avoid duplication.
+ *
+ * @module VoterStatus
+ */
+import { useState, useCallback } from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { t } from '../data/translations';
+import { statesList } from '../data/votingInfo';
 
+/**
+ * VoterStatus sub-component — embedded in VotingGuide.
+ * @returns {JSX.Element}
+ */
 export default function VoterStatus() {
   const { language } = useLanguage();
+  /** @param {string} key */
   const L = (key) => t(language, key);
 
   const [formData, setFormData] = useState({ name: '', state: '' });
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  /** Handle form submission — simulates voter roll lookup. */
+  const handleSubmit = useCallback((e) => {
     e.preventDefault();
     if (!formData.name.trim() || !formData.state) return;
-    
+
     setLoading(true);
     setResult(null);
 
@@ -23,27 +41,19 @@ export default function VoterStatus() {
       const isFound = formData.name.trim().length % 2 === 0;
       setResult({
         status: isFound ? 'found' : 'not_found',
-        message: isFound 
+        message: isFound
           ? (language === 'hi' ? '✅ आपका नाम मतदाता सूची में मिल गया है।' : '✅ Your name was found in the voter list.')
           : (language === 'hi' ? '❌ आपका नाम मतदाता सूची में नहीं मिला।' : '❌ Your name was not found in the voter list.'),
-        suggestion: !isFound 
+        suggestion: !isFound
           ? (language === 'hi' ? 'आपको रजिस्टर करने की आवश्यकता है। कृपया फॉर्म 6 भरें या National Voters Service Portal (nvsp.in) पर जाएँ।' : 'You need to register. Please fill Form 6 or visit the National Voters Service Portal (nvsp.in).')
           : null
       });
       setLoading(false);
     }, 1500);
-  };
-
-  const statesList = [
-    "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh", "Goa", "Gujarat", "Haryana",
-    "Himachal Pradesh", "Jharkhand", "Karnataka", "Kerala", "Madhya Pradesh", "Maharashtra", "Manipur",
-    "Meghalaya", "Mizoram", "Nagaland", "Odisha", "Punjab", "Rajasthan", "Sikkim", "Tamil Nadu",
-    "Telangana", "Tripura", "Uttar Pradesh", "Uttarakhand", "West Bengal", "Andaman and Nicobar Islands",
-    "Chandigarh", "Dadra and Nagar Haveli and Daman and Diu", "Lakshadweep", "Delhi", "Puducherry"
-  ];
+  }, [formData, language]);
 
   return (
-    <section className="rounded-2xl border border-gray-200 shadow-md bg-white p-6" id="voter-status-section" aria-label="Voter Status Checker">
+    <section className="rounded-2xl border border-gray-200 shadow-md bg-white p-6" id="voter-status-section" aria-label={language === 'hi' ? 'मतदाता स्थिति जांचें' : 'Voter Status Checker'}>
       <h3 className="text-[#8b5e34] font-semibold text-xl mb-2">{language === 'hi' ? '🗳️ मतदाता स्थिति जांचें (सिम्युलेटेड)' : '🗳️ Check Voter Status (Simulated)'}</h3>
       <p className="text-gray-600 mb-6">{language === 'hi' ? 'जानें कि आपका नाम मतदाता सूची में है या नहीं।' : 'Find out if your name is on the voter list.'}</p>
 

@@ -1,9 +1,23 @@
-import { useState } from 'react';
+/**
+ * VotingGuide — Personalized voting readiness page.
+ *
+ * Provides:
+ *  - Voter status checker (via VoterStatus sub-component)
+ *  - Personalized eligibility assessment form
+ *  - Interactive voting-day checklist with progress tracking
+ *
+ * @module VotingGuide
+ */
+import { useState, useCallback } from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { t } from '../data/translations';
 import { votingChecklist, getPersonalizedGuide, statesList } from '../data/votingInfo';
 import VoterStatus from './VoterStatus';
 
+/**
+ * VotingGuide page component.
+ * @returns {JSX.Element}
+ */
 export default function VotingGuide() {
   const { language } = useLanguage();
   const L = (key) => t(language, key);

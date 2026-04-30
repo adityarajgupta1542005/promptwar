@@ -1,6 +1,18 @@
+/**
+ * QuickTips — Informational voting tips card grid.
+ *
+ * Displays three animated tip cards covering voting preparation,
+ * vote secrecy, and staying informed. Used on the Dashboard page.
+ *
+ * @module QuickTips
+ */
 import { useLanguage } from '../contexts/LanguageContext';
 import { t } from '../data/translations';
 
+/**
+ * QuickTips component.
+ * @returns {JSX.Element}
+ */
 export default function QuickTips() {
   const { language } = useLanguage();
   const L = (key) => t(language, key);
